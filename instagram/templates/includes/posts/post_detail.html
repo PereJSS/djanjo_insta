@@ -1,0 +1,61 @@
+{% extends "general/layout.html" %}
+
+{% block head_title %}Página de contacto{% endblock %}
+<div class="container">
+
+
+{% block content %}
+<h1>Detalle de la publicación</h1>
+<article class="card border shadow-sm rounded-4 mb-4 overflow-hidden bg-white" style="border-color: rgba(33, 37, 41, 0.12) !important;">
+    <div class="card-body pb-3">
+        <div class="d-flex align-items-center gap-3">
+            {% if post.user.profile.profile_picture %}
+                <img
+                    class="rounded-circle object-fit-cover"
+                    src="{{ post.user.profile.profile_picture.url }}"
+                    alt="Avatar de {{ post.user.username }}"
+                    width="48"
+                    height="48"
+                >
+            {% else %}
+                <div
+                    class="rounded-circle bg-dark-subtle text-dark d-flex align-items-center justify-content-center fw-bold"
+                    style="width: 48px; height: 48px;"
+                >
+                    {{ post.user.username|first|upper }}
+                </div>
+            {% endif %}
+
+            <div>
+                <h6 class="mb-0 fw-semibold">{{ post.user.username }}</h6>
+                <small class="text-body-secondary">{{ post.created_at|date:"d/m/Y H:i" }}</small>
+            </div>
+
+            {% if request.user.is_authenticated %}
+                {% with likes_count=post.likes.count %}
+                    <a href="{% url 'like_post_ajax' post.pk %}" data-redirect-url="{% url 'like_post' post.pk %}" class="js-like-button ms-auto badge rounded-pill bg-dark border border-secondary-subtle d-inline-flex align-items-center gap-2 px-3 py-2 text-decoration-none">
+                        <span class="js-like-count text-white">{{ likes_count }}</span>
+                        <span class="js-like-heart fs-6 {% if request.user in post.likes.all %}text-danger{% else %}text-white{% endif %}" style="line-height: 1;">♥</span>
+                    </a>
+                {% endwith %}
+            {% endif %}
+        </div>
+
+        {% if post.content %}
+            <p class="mt-3 mb-0">{{ post.content }}</p>
+        {% endif %}
+    </div>
+
+    {% if post.imagen %}
+        <img
+            class="img-fluid d-block mx-auto mb-3"
+            src="{{ post.imagen.url }}"
+            alt="Imagen de la publicación de {{ post.user.username }}"
+            style="max-height: 340px; width: auto; max-width: 100%;"
+            loading="lazy"
+        >
+    {% endif %}
+</article>
+{% endblock %}
+</div>
+

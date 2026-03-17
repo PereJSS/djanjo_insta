@@ -1,0 +1,20 @@
+<header>
+  <div class="container">
+    <h1>InstagConquer</h1>
+    <nav>
+      <ul>
+        <li><a href="{% url 'home' %}">Inicio</a></li>
+        <li><a href="{% url 'profiles' %}">Perfiles</a></li>
+        {% if not request.user.is_authenticated %}
+        <li><a href="{% url 'login' %}">Login</a></li>
+        <li><a href="{% url 'register' %}">Registro</a></li>
+        {% else %}
+        <li><a href="{% url 'logout' %}">Cerrar sesión</a></li>
+        <li><a href="{% url 'profile_detail' request.user.profile.pk %}">Mi perfil</a></li>
+        <li><a href="{% url 'post_create' %}">Nueva Publicación</a></li>
+        {% endif %}
+        <li><a href="{% url 'contact' %}">Contacto</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>

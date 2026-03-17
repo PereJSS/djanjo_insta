@@ -1,0 +1,21 @@
+{% extends "general/layout.html" %} {% load crispy_forms_tags %} 
+{% block head_title %}Editar perfil{% endblock %}
+<div class="container">
+  
+
+  {% block content %}
+  <h1>Editar perfil</h1>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="row">
+      <div class="col-12 col-md-6 offset-md-3">
+        {{ form.bio |as_crispy_field }}
+         {{ form.birth_date |as_crispy_field}}
+          {{ form.profile_picture |as_crispy_field }}
+
+        <button class="btn btn-primary w-100">Guardar cambios</button>
+      </div>
+    </div>
+  </form>
+  {% endblock %}
+</div>

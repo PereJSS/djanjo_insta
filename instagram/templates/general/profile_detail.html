@@ -1,0 +1,52 @@
+{% extends "general/layout.html" %}
+ {% block head_title %}Perfil{% endblock %}
+{% block content %}
+<div class="container">
+  <h1>Perfil</h1>
+  <p>Biografia: {{ profile.bio|default:"Sin biografía" }}</p>
+  <p>Fecha de nacimiento: {{ profile.birth_date|default_if_none:"No especificada" }}</p>
+  <p>Usuario: {{ profile.user.username }}</p>
+  <p>Correo electrónico: {{ profile.user.email }}</p>
+  <p>
+    {% if profile.profile_picture %}
+      <img width="100px" src="{{ profile.profile_picture.url }}" alt="Foto de perfil" class="img-fluid">
+    {% else %}
+      <span>No hay foto de perfil</span>
+    {% endif %}
+  </p>
+  <p>Seguidores: {{ profile.followers.count }}</p>
+  <p>Siguiendo: {{ profile.following.count }}</p>
+  {% if profile != request.user.profile %}
+    {% if is_following %}
+      <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="profile_pk" value="{{ profile.pk }}">
+        <input type="hidden" name="action" value="unfollow">
+        <button type="submit" class="btn btn-outline-secondary">Dejar de seguir</button>
+      </form>
+    {% else %}
+      <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="profile_pk" value="{{ profile.pk }}">
+        <input type="hidden" name="action" value="follow">
+        <button type="submit" class="btn btn-primary">Seguir</button>
+      </form>
+    {% endif %}
+  {% endif %}
+  {% if profile.user == request.user %}
+   <p><a href="{% url 'profile_update' profile.pk %}">Editar perfil</a></p>
+  {% endif %}
+
+  <section>
+    <h2>Mis publicaciones</h2>
+    {% for post in profile.user.posts.all %}
+    <div class="col12 col-sm-6 col-md-4">
+      {% include "includes/posts/posts.html" with post=post %}
+      <hr class="hr"/>
+    </div>
+    {% empty %}
+      <p>No has publicado nada aún.</p>
+    {% endfor %}
+  </section>
+</div>
+{% endblock %}

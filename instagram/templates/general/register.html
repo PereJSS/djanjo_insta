@@ -1,0 +1,20 @@
+{% extends "general/layout.html" %} {% load crispy_forms_tags %} {% block
+head_title %}Página de registro{% endblock %}
+<div class="container">
+  <h1>Registro</h1>
+
+  {% block content %}
+  <form method="post">
+    {% csrf_token %}
+    <div class="row">
+      <div class="col-12 col-md-6 offset-md-3">
+        {{ form.first_name |as_crispy_field }} {{ form.username |as_crispy_field
+        }} {{ form.email |as_crispy_field }} {{ form.password |as_crispy_field
+        }}
+
+        <button class="btn btn-primary w-100">Registrarse</button>
+      </div>
+    </div>
+  </form>
+  {% endblock %}
+</div>
