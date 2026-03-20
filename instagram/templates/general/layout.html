@@ -45,39 +45,47 @@
         return '';
       }
 
-      const likeButtons = document.querySelectorAll('.js-like-button');
-      if (likeButtons) {
+      const likeForms = document.querySelectorAll('.js-like-form');
+      if (likeForms.length > 0) {
 
-      likeButtons.forEach((likeButton) => {
-        likeButton.addEventListener('click', (event) => {
-          const nLikesSpan = likeButton.querySelector('.js-like-count');
-          const likeHeart = likeButton.querySelector('.js-like-heart');
+      likeForms.forEach((likeForm) => {
+        likeForm.addEventListener('submit', (event) => {
+          const nLikesSpan = likeForm.querySelector('.js-like-count');
+          const likeHeart = likeForm.querySelector('.js-like-heart');
+          const ajaxUrl = likeForm.dataset.ajaxUrl;
+          const unlikedHeartClass = likeForm.dataset.unlikedHeartClass || 'text-secondary';
           let nLikes = parseInt(nLikesSpan.innerHTML, 10);
 
           event.preventDefault();
 
-          fetch(likeButton.href, {
+          fetch(ajaxUrl, {
             method: 'POST',
             headers: {
               'X-CSRFToken': getCookie('csrftoken')
             }
           })
-            .then(response => response.json())
+            .then(response => {
+              if (!response.ok) {
+                throw new Error('Like request failed');
+              }
+
+              return response.json();
+            })
             .then(data => {
+              likeHeart.classList.remove('text-danger', 'text-secondary', 'text-white');
+
               if (data.liked) {
                 nLikes += 1;
-                likeHeart.classList.remove('text-secondary');
                 likeHeart.classList.add('text-danger');
               } else {
                 nLikes -= 1;
-                likeHeart.classList.remove('text-danger');
-                likeHeart.classList.add('text-secondary');
+                likeHeart.classList.add(unlikedHeartClass);
               }
 
               nLikesSpan.innerHTML = data.likes_count || nLikes;
             })
             .catch(() => {
-              window.location.href = likeButton.dataset.redirectUrl;
+              likeForm.submit();
             });
         });
       });

@@ -14,38 +14,48 @@
       <span>No hay foto de perfil</span>
     {% endif %}
   </p>
-  <p>Seguidores: {{ profile.followers.count }}</p>
-  <p>Siguiendo: {{ profile.following.count }}</p>
-  {% if profile != request.user.profile %}
+  <p>Seguidores: {{ profile.followers_count }}</p>
+  <p>Siguiendo: {{ profile.following_count }}</p>
+  {% if not is_own_profile %}
     {% if is_following %}
       <form method="post">
         {% csrf_token %}
-        <input type="hidden" name="profile_pk" value="{{ profile.pk }}">
-        <input type="hidden" name="action" value="unfollow">
+        <input type="hidden" name="follow_action" value="unfollow">
         <button type="submit" class="btn btn-outline-secondary">Dejar de seguir</button>
       </form>
     {% else %}
       <form method="post">
         {% csrf_token %}
-        <input type="hidden" name="profile_pk" value="{{ profile.pk }}">
-        <input type="hidden" name="action" value="follow">
+        <input type="hidden" name="follow_action" value="follow">
         <button type="submit" class="btn btn-primary">Seguir</button>
       </form>
     {% endif %}
   {% endif %}
-  {% if profile.user == request.user %}
+  {% if is_own_profile %}
    <p><a href="{% url 'profile_update' profile.pk %}">Editar perfil</a></p>
   {% endif %}
 
   <section>
-    <h2>Mis publicaciones</h2>
-    {% for post in profile.user.posts.all %}
+    <h2>
+      {% if is_own_profile %}
+        Mis publicaciones
+      {% else %}
+        Publicaciones de {{ profile.user.username }}
+      {% endif %}
+    </h2>
+    {% for post in profile_posts %}
     <div class="col12 col-sm-6 col-md-4">
       {% include "includes/posts/posts.html" with post=post %}
       <hr class="hr"/>
     </div>
     {% empty %}
-      <p>No has publicado nada aún.</p>
+      <p>
+        {% if is_own_profile %}
+          No has publicado nada aún.
+        {% else %}
+          {{ profile.user.username }} todavía no ha publicado nada.
+        {% endif %}
+      </p>
     {% endfor %}
   </section>
 </div>

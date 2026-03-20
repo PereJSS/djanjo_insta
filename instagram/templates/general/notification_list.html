@@ -1,0 +1,36 @@
+{% extends "general/layout.html" %}
+
+{% block head_title %}Notificaciones{% endblock %}
+
+{% block content %}
+<section class="container py-4 py-lg-5">
+  <div class="mx-auto" style="max-width: 900px;">
+    <header class="mb-4">
+      <h1 class="h2 mb-2">Notificaciones</h1>
+      <p class="text-body-secondary mb-0">Aquí puedes revisar la actividad reciente relacionada con tu perfil y tus publicaciones.</p>
+    </header>
+
+    {% if notifications %}
+      <div class="list-group">
+        {% for notification in notifications %}
+          <article class="list-group-item list-group-item-action">
+            <div class="d-flex w-100 justify-content-between gap-3">
+              <div>
+                <p class="mb-1">{{ notification.message }}</p>
+                {% if notification.target_url %}
+                  <a href="{{ notification.target_url }}">Ver detalle</a>
+                {% endif %}
+              </div>
+              <small class="text-body-secondary text-nowrap">{{ notification.created_at|date:"d/m/Y H:i" }}</small>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="text-center py-5">
+        <p class="text-body-secondary mb-0">No tienes notificaciones todavía.</p>
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

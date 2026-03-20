@@ -1,17 +1,30 @@
 {% extends "general/layout.html" %}
 
-{% block head_title %}Página de inicio{% endblock %}
+{% block head_title %}Passionlinks{% endblock %}
 
 {% block content %}
 <section class="container py-4 py-lg-5">
     <div class="mx-auto" style="max-width: 1200px;">
         <header class="text-center mb-4 mb-lg-5">
-            <h1 class="mb-2">Bienvenido a InstaConqueer</h1>
-            <p class="text-body-secondary mb-0">Esta es la página de inicio de Instagram.</p>
+            <h1 class="mb-2">PassionLinks</h1>
+            <p class="text-body-secondary mb-0">Mini red social temática para compartir publicaciones, seguir perfiles y descubrir aficiones en común.</p>
         </header>
 
         <div class="mb-4 text-center">
-            <h2 class="h3 mb-0">Últimas publicaciones</h2>
+            <h2 class="h3 mb-1">
+                {% if request.user.is_authenticated %}
+                    Tu muro de aficiones
+                {% else %}
+                    Publicaciones recientes de la comunidad
+                {% endif %}
+            </h2>
+            <p class="text-body-secondary mb-0">
+                {% if request.user.is_authenticated %}
+                    Aquí aparecen las publicaciones más recientes de los perfiles a los que sigues.
+                {% else %}
+                    Explora las últimas publicaciones y accede para empezar a seguir a otros perfiles.
+                {% endif %}
+            </p>
         </div>
 
         {% if last_posts %}
@@ -26,7 +39,13 @@
             </div>
         {% else %}
             <div class="text-center py-5">
-                <p class="text-body-secondary mb-0">Todavía no hay publicaciones para mostrar.</p>
+                <p class="text-body-secondary mb-0">
+                    {% if request.user.is_authenticated %}
+                        Tu muro está vacío por ahora. Sigue a otros perfiles para ver aquí sus publicaciones.
+                    {% else %}
+                        Todavía no hay publicaciones para mostrar.
+                    {% endif %}
+                </p>
             </div>
         {% endif %}
     </div>

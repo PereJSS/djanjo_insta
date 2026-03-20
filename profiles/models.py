@@ -21,11 +21,17 @@ class UserProfile(models.Model):
     
     def follow(self, profile):
         if profile != self:
-            Follow.objects.get_or_create(follower=self, following=profile)
+            _, created = Follow.objects.get_or_create(follower=self, following=profile)
+            return created
+
+        return False
 
     def unfollow(self, profile):
         if profile != self:
-            Follow.objects.filter(follower=self, following=profile).delete()
+            deleted_count, _ = Follow.objects.filter(follower=self, following=profile).delete()
+            return deleted_count > 0
+
+        return False
   
   
 class Follow(models.Model):

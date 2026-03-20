@@ -1,6 +1,6 @@
 <header>
   <div class="container">
-    <h1>InstagConquer</h1>
+    <h1>Descubre Tu Próxima Pasión</h1>
     <nav>
       <ul>
         <li><a href="{% url 'home' %}">Inicio</a></li>
@@ -10,7 +10,10 @@
         <li><a href="{% url 'register' %}">Registro</a></li>
         {% else %}
         <li><a href="{% url 'logout' %}">Cerrar sesión</a></li>
-        <li><a href="{% url 'profile_detail' request.user.profile.pk %}">Mi perfil</a></li>
+        {% if current_user_profile %}
+        <li><a href="{% url 'profile_detail' current_user_profile.pk %}">Mi perfil</a></li>
+        {% endif %}
+        <li><a href="{% url 'notification_list' %}">Notificaciones</a></li>
         <li><a href="{% url 'post_create' %}">Nueva Publicación</a></li>
         {% endif %}
         <li><a href="{% url 'contact' %}">Contacto</a></li>

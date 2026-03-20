@@ -24,14 +24,19 @@ class RegistrationForm(forms.ModelForm):
 
 class LoginForm(forms.Form):
 
-    username = forms.CharField(label='Email')
+    username = forms.CharField(label='Nombre de usuario')
     password = forms.CharField(label='password', widget=forms.PasswordInput())
     
 
 class FollowForm(forms.Form):
-    profile_pk = forms.IntegerField(widget=forms.HiddenInput())
-    action = forms.ChoiceField(
+    follow_action = forms.ChoiceField(
         choices=[('follow', 'Seguir'), ('unfollow', 'Dejar de seguir')],
         widget=forms.HiddenInput(),
         required=False,
     )
+
+    def clean_follow_action(self):
+        requested_follow_action = self.cleaned_data.get('follow_action') or 'follow'
+        if requested_follow_action not in {'follow', 'unfollow'}:
+            return 'follow'
+        return requested_follow_action

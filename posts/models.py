@@ -15,6 +15,23 @@ class Post(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.created_at.strftime('%Y-%m-%d %H:%M:%S')}"
+
+    def get_ordered_comments(self):
+        return self.comments.select_related('user').order_by('-created_at')
+
+    def get_comments_count(self):
+        return self.comments.count()
+
+    def add_comment(self, author_user, comment_content):
+        normalized_comment_content = (comment_content or '').strip()
+        if not normalized_comment_content:
+            raise ValueError('El comentario no puede estar vacio.')
+
+        return Comment.objects.create(
+            post=self,
+            user=author_user,
+            content=normalized_comment_content,
+        )
     
 
 class Comment(models.Model):
@@ -26,6 +43,7 @@ class Comment(models.Model):
     class Meta:
         verbose_name = 'Comentario'
         verbose_name_plural = 'Comentarios'
+        ordering = ['-created_at']
 
     def __str__(self):
         return f"{self.user.username} comenta en {self.post.id} - {self.created_at.strftime('%Y-%m-%d %H:%M:%S')}"

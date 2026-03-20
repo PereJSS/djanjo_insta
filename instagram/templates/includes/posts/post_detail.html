@@ -6,7 +6,7 @@
 
 {% block content %}
 <h1>Detalle de la publicación</h1>
-<article class="card border shadow-sm rounded-4 mb-4 overflow-hidden bg-white" style="border-color: rgba(33, 37, 41, 0.12) !important;">
+<article id="post-{{ post.pk }}" class="card border shadow-sm rounded-4 mb-4 overflow-hidden bg-white" style="border-color: rgba(33, 37, 41, 0.12) !important;">
     <div class="card-body pb-3">
         <div class="d-flex align-items-center gap-3">
             {% if post.user.profile.profile_picture %}
@@ -32,12 +32,14 @@
             </div>
 
             {% if request.user.is_authenticated %}
-                {% with likes_count=post.likes.count %}
-                    <a href="{% url 'like_post_ajax' post.pk %}" data-redirect-url="{% url 'like_post' post.pk %}" class="js-like-button ms-auto badge rounded-pill bg-dark border border-secondary-subtle d-inline-flex align-items-center gap-2 px-3 py-2 text-decoration-none">
-                        <span class="js-like-count text-white">{{ likes_count }}</span>
-                        <span class="js-like-heart fs-6 {% if request.user in post.likes.all %}text-danger{% else %}text-white{% endif %}" style="line-height: 1;">♥</span>
-                    </a>
-                {% endwith %}
+                <form method="post" action="{% url 'like_post' post.pk %}" class="js-like-form ms-auto mb-0" data-ajax-url="{% url 'like_post_ajax' post.pk %}" data-unliked-heart-class="text-white">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.get_full_path }}#post-{{ post.pk }}">
+                    <button type="submit" class="js-like-button badge rounded-pill bg-dark border border-secondary-subtle d-inline-flex align-items-center gap-2 px-3 py-2 text-decoration-none">
+                        <span class="js-like-count text-white">{{ post.total_likes }}</span>
+                        <span class="js-like-heart fs-6 {% if post.is_liked_by_current_user %}text-danger{% else %}text-white{% endif %}" style="line-height: 1;">♥</span>
+                    </button>
+                </form>
             {% endif %}
         </div>
 
@@ -55,6 +57,36 @@
             loading="lazy"
         >
     {% endif %}
+
+    <details class="mx-3 mb-3" open>
+        <summary class="fw-semibold py-2">
+            Comentarios ({{ post.total_comments }})
+        </summary>
+
+        <div class="pt-2">
+            <form method="post" action="{% url 'post_comment_create' post.pk %}" class="mb-4">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.get_full_path }}#post-{{ post.pk }}">
+                <label for="comment-content-{{ post.pk }}" class="form-label">Nuevo comentario</label>
+                <textarea id="comment-content-{{ post.pk }}" name="content" rows="3" class="form-control" placeholder="Escribe un comentario..."></textarea>
+                <div class="mt-2">
+                    <button type="submit" class="btn btn-primary btn-sm">Publicar comentario</button>
+                </div>
+            </form>
+
+            {% for comment in post.comments.all %}
+                <article class="border rounded-3 p-3 mb-3">
+                    <header class="d-flex justify-content-between align-items-center mb-2">
+                        <strong>{{ comment.user.username }}</strong>
+                        <small class="text-body-secondary">{{ comment.created_at|date:"d/m/Y H:i" }}</small>
+                    </header>
+                    <p class="mb-0">{{ comment.content }}</p>
+                </article>
+            {% empty %}
+                <p class="text-body-secondary mb-0">Todavia no hay comentarios en esta publicacion.</p>
+            {% endfor %}
+        </div>
+    </details>
 </article>
 {% endblock %}
 </div>
