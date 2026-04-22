@@ -1,0 +1,39 @@
+# Ignore Django templates to prevent breaking Django template syntax
+**/templates/**/*.html
+templates/**/*.html
+
+# Ignore all HTML files (Django templates)
+*.html
+
+# Ignore migrations
+**/migrations/**
+
+# Database files
+*.sqlite3
+*.db
+
+# Media and static files
+media/
+static/
+post_images/
+profile_pictures/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Virtual environment
+env/
+venv/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
